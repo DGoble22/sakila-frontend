@@ -30,7 +30,11 @@ export default function Home() {
 
     return (
         <div className="container mt-4">
+
+            {/* Landing Page Header */}
             <h1 className="text-center">Landing Page</h1>
+
+            {/* Top 5 Rented Films Table */}
             <h2>Top 5 Rented Films</h2>
             <table className="table table-striped table-hover" style={{cursor: 'pointer'}}>
                 <thead>
