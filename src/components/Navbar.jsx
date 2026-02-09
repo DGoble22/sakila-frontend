@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 
 const Navbar = () => {
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
+        <nav className="navbar navbar-expand navbar-dark bg-dark shadow-sm py-3">
             <div className="container">
                 {/* Logo */}
                 <Link to="/" className="navbar-brand fw-bold">SAKILA</Link>
@@ -22,8 +22,6 @@ const Navbar = () => {
                         </li>
                     </ul>
                 </div>
-
-                {/* Empty div to keep links perfectly centered */}
                 <div style={{ width: "80px" }} className="d-none d-lg-block"></div>
             </div>
         </nav>
