@@ -1,4 +1,5 @@
-import react, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import SakilaMovieImage from "../assets/SakilaMovie.png";
 
 export default function FilmDetailsModal({ filmId, onClose }) {
     const [filmDetails, setFilmDetails] = useState(null);
@@ -26,13 +27,15 @@ export default function FilmDetailsModal({ filmId, onClose }) {
             <div className="modal-dialog modal-dialog-centered modal-lg">
                 <div className="modal-content shadow-lg">
                     <div className="modal-header bg-dark text-white">
-                        <h5 className="modal-title fw-bold">{filmDetails.title}</h5>
+                        <h5 className="modal-title fw-bold">{filmDetails.title} ({filmDetails.release_year})</h5>
                         <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
                     </div>
                     <div className="modal-body p-4">
-                        <p><strong>Description:</strong> {filmDetails.description}</p>
+                        <div className="text-center mb-4">
+                            <img src={SakilaMovieImage} alt={filmDetails.title} className="img-fluid rounded shadow" style={{maxHeight: '300px', objectFit: 'cover'}}/>
+                        </div>
                         <p><strong>Category:</strong> {filmDetails.category_name}</p>
-                        <p><strong>Release Year:</strong> {filmDetails.release_year}</p>
+                        <p><strong>Description:</strong> {filmDetails.description}</p>
                         <p><strong>Actors:</strong> {filmDetails.actors}</p>
                     </div>
                     <div className="modal-footer">
