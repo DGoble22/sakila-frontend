@@ -26,7 +26,7 @@ export default function FilmDetailsModal({ filmId, onClose }) {
         <div className="modal show d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(5px)'}}>
             <div className="modal-dialog modal-dialog-centered modal-lg">
                 <div className="modal-content shadow-lg">
-                    <div className="modal-header bg-dark text-white">
+                    <div className="modal-header text-white" style={{background: 'linear-gradient(90deg, #ff0000 0%, #000000 100%)'}}>
                         <h5 className="modal-title fw-bold">{filmDetails.title} ({filmDetails.release_year})</h5>
                         <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
                     </div>

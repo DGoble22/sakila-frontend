@@ -26,7 +26,7 @@ export default function ActorDetailsModal({ actorId, onClose }) {
         <div className="modal show d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(5px)'}}>
             <div className="modal-dialog modal-dialog-centered modal-lg">
                 <div className="modal-content shadow-lg">
-                    <div className="modal-header bg-dark text-white justify-content-center">
+                    <div className="modal-header bg-dark text-white justify-content-center" style={{background: 'linear-gradient(90deg, #ff0000 0%, #000000 100%)'}}>
                         <h5 className="modal-title fw-bold">{actorDetails.actor_name}</h5>
                         <button type="button" className="btn-close btn-close-white position-absolute end-0 me-3" onClick={onClose}></button>
                     </div>
