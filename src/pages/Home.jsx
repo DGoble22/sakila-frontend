@@ -12,7 +12,7 @@ export default function Home() {
 
     const [topActors, setTopActors] = useState([]);
     const [loadingTopActors, setLoadingTopActors] = useState(true);
-    const [selectedActorId, setSelectedActorId] = useState(null);
+    const [selectedActor, setSelectedActor] = useState(null);
 
     /* States and hook for top films table */
     useEffect(() => {
@@ -87,7 +87,7 @@ export default function Home() {
             <table className="table table-striped table-hover" style={{cursor: 'pointer'}}>
                 <tbody>
                 {topActors.map((actor) => (
-                    <tr key={actor.actor_id} className="text-center" onClick={() => setSelectedActorId(actor.actor_id)}>
+                    <tr key={actor.actor_id} className="text-center" onClick={() => setSelectedActor(actor)}>
                         <td>{actor.actor_name} ({actor.rental_count} rentals)</td>
                     </tr>
                 ))}
@@ -95,10 +95,11 @@ export default function Home() {
             </table>
 
             {/* If there is a selected actor show the details modal */}
-            {selectedActorId && (
+            {selectedActor && (
                 <ActorDetailsModal
-                    actorId={selectedActorId}
-                    onClose={() => setSelectedActorId(null)}
+                    actorId={selectedActor.actor_id}
+                    actorName={selectedActor.actor_name}
+                    onClose={() => setSelectedActor(null)}
                 />
             )}
 
