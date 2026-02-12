@@ -7,12 +7,10 @@ export default function Films() {
     const [loading, setLoading] = useState(true);
     const [selectedFilmId, setSelectedFilmId] = useState(null);
 
-    // This function fetches data from your new Flask route
     const fetchFilms = async (query = "") => {
         setLoading(true);
         try {
-            // If query is empty, it hits /api/films
-            // If query is "rock", it hits /api/films?search=rock
+            // Goes to /api/films?search= and then whatever the search was
             const url = query
                 ? `/api/films?search=${encodeURIComponent(query)}`
                 : '/api/films';
@@ -29,7 +27,7 @@ export default function Films() {
         }
     };
 
-    // Initial load (get first 50 films)
+    // Initial load which gets first 50 films
     useEffect(() => {
         fetchFilms();
     }, []);
@@ -64,6 +62,7 @@ export default function Films() {
                     <thead>
                     <tr>
                         <th>Title</th>
+                        <th>Category</th>  {/* Added this column */}
                         <th>Release Year</th>
                         <th>Rating</th>
                         <th>Actions</th>
@@ -73,14 +72,21 @@ export default function Films() {
                     {films.map((film) => (
                         <tr key={film.film_id}>
                             <td>{film.title}</td>
+                            <td>
+                                <span className="badge bg-secondary">{film.category}</span> {/* Added this badge */}
+                            </td>
                             <td>{film.release_year}</td>
                             <td>{film.rating}</td>
                             <td>
                                 <button
-                                    className="btn btn-sm btn-outline-info"
+                                    className="btn btn-sm btn-outline-info me-2" // added margin for spacing
                                     onClick={() => setSelectedFilmId(film.film_id)}
                                 >
                                     Details
+                                </button>
+                                {/* will be used for rent button later on */}
+                                <button className="btn btn-sm btn-success">
+                                    Rent
                                 </button>
                             </td>
                         </tr>
@@ -89,7 +95,7 @@ export default function Films() {
                 </table>
             )}
 
-            {/* Reuse your existing Modal! */}
+            {/*Reuse modal*/}
             {selectedFilmId && (
                 <FilmDetailsModal
                     filmId={selectedFilmId}
