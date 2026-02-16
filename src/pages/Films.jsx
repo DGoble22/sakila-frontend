@@ -7,6 +7,8 @@ export default function Films() {
     const [loading, setLoading] = useState(true);
     const [selectedFilmId, setSelectedFilmId] = useState(null);
 
+    //Fetch films from backend, with optional search query
+    //async and await prevent the screen from freezing while waiting for the response
     const fetchFilms = async (query = "") => {
         setLoading(true);
         try {
@@ -38,6 +40,39 @@ export default function Films() {
         fetchFilms(searchTerm);
     };
 
+    const handleRentClick = async (filmId, filmTitle) => {
+        // Asks clerk for customer ID
+        const customerId = prompt(`Enter Customer ID to rent "${filmTitle}":`);
+
+        // In case user pressed cancel or left it blank
+        if (!customerId) return;
+
+        // Sends request to backend
+        try {
+            const response = await fetch('/api/rent-film', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    film_id: filmId,
+                    customer_id: customerId
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+            } else {
+                alert("Error: " + data.error);
+            }
+        } catch (error) {
+            console.error("Rental failed:", error);
+            alert("Failed to connect to server.");
+        }
+    };
+
     return (
         <div className="container mt-4">
             <h1 className="mb-4">Film Library</h1>
@@ -62,13 +97,15 @@ export default function Films() {
                     <thead>
                     <tr>
                         <th>Title</th>
-                        <th>Category</th>  {/* Added this column */}
+                        <th>Category</th>
                         <th>Release Year</th>
                         <th>Rating</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
+
+                    {/* loop through films and create a table row from every element */}
                     {films.map((film) => (
                         <tr key={film.film_id}>
                             <td>{film.title}</td>
@@ -78,14 +115,19 @@ export default function Films() {
                             <td>{film.release_year}</td>
                             <td>{film.rating}</td>
                             <td>
+                                {/* details button */}
                                 <button
                                     className="btn btn-sm btn-outline-info me-2" // added margin for spacing
                                     onClick={() => setSelectedFilmId(film.film_id)}
                                 >
                                     Details
                                 </button>
-                                {/* will be used for rent button later on */}
-                                <button className="btn btn-sm btn-success">
+
+                                {/* rent botton */}
+                                <button
+                                    className="btn btn-sm btn-success"
+                                    onClick={() => handleRentClick(film.film_id, film.title)}
+                                >
                                     Rent
                                 </button>
                             </td>
@@ -95,7 +137,7 @@ export default function Films() {
                 </table>
             )}
 
-            {/*Reuse modal*/}
+            {/*Reused film detail modal*/}
             {selectedFilmId && (
                 <FilmDetailsModal
                     filmId={selectedFilmId}
