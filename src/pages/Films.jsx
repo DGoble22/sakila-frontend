@@ -86,14 +86,14 @@ export default function Films() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <button type="submit" className="btn btn-primary">Search</button>
+                <button type="submit" className="btn btn-danger">Search</button>
             </form>
 
             {/* Results Table */}
             {loading ? (
                 <p>Loading films...</p>
             ) : (
-                <table className="table table-hover">
+                <table className="table table-striped table-hover" style={{cursor: 'pointer'}}>
                     <thead>
                     <tr>
                         <th>Title</th>
@@ -107,7 +107,12 @@ export default function Films() {
 
                     {/* loop through films and create a table row from every element */}
                     {films.map((film) => (
-                        <tr key={film.film_id}>
+                        <tr
+                            //show film details when clicking anywhere on the row, except the rent button
+                            key={film.film_id}
+                            onClick = {() => setSelectedFilmId(film.film_id)}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <td>{film.title}</td>
                             <td>
                                 <span className="badge bg-secondary">{film.category}</span> {/* Added this badge */}
@@ -115,18 +120,14 @@ export default function Films() {
                             <td>{film.release_year}</td>
                             <td>{film.rating}</td>
                             <td>
-                                {/* details button */}
-                                <button
-                                    className="btn btn-sm btn-outline-info me-2" // added margin for spacing
-                                    onClick={() => setSelectedFilmId(film.film_id)}
-                                >
-                                    Details
-                                </button>
 
                                 {/* rent botton */}
                                 <button
-                                    className="btn btn-sm btn-success"
-                                    onClick={() => handleRentClick(film.film_id, film.title)}
+                                    className="btn btn-sm btn-danger"
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Prevents the row click event that shows film details
+                                        handleRentClick(film.film_id, film.title);
+                                    }}
                                 >
                                     Rent
                                 </button>
