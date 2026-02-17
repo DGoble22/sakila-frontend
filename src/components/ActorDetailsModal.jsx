@@ -25,12 +25,15 @@ export default function ActorDetailsModal({ actorId, actorName, onClose }) {
             <div className="modal-dialog modal-dialog-centered modal-lg">
                 <div className="modal-content shadow-lg">
 
+                    {/* Header */}
                     <div className="modal-header bg-dark text-white justify-content-center" style={{background: 'linear-gradient(90deg, #ff0000 0%, #000000 100%)'}}>
                         <h5 className="modal-title fw-bold">{actorName}</h5>
                         <button type="button" className="btn-close btn-close-white position-absolute end-0 me-3" onClick={onClose}></button>
                     </div>
 
                     <div className="modal-body p-4">
+
+                        {/* Img of actor */}
                         <div className="text-center mb-4">
                             <img src={SakilaActorImage} alt={actorName} className="img-fluid rounded" style={{maxHeight: '300px', objectFit: 'cover'}}/>
                         </div>

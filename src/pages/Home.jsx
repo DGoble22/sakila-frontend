@@ -60,10 +60,15 @@ export default function Home() {
     return (
         <div className="container mt-4">
 
-
             {/* Top 5 Rented Films Table */}
-            <h2 className="text-center">Top 5 Rented Films</h2>
-            <table className="table table-striped table-hover" style={{cursor: 'pointer'}}>
+            <div className="text-center mb-4">
+                <h2 className="d-inline-block fw-bold text-white rounded-pill px-5 py-3" style={{
+                    fontSize: '1.5rem',
+                    letterSpacing: '1px',
+                    background: 'linear-gradient(90deg, #ff0000 0%, #000000 100%)'
+                }}>Top 5 Rented Films</h2>
+            </div>
+            <table className="table table-hover" style={{cursor: 'pointer'}}>
                 <thead>
                     <tr >
                         <th>Film Name</th>
@@ -75,16 +80,25 @@ export default function Home() {
                     {topFilms.map((film) => (
                         <tr key={film.film_id} onClick={() => setSelectedFilmId(film.film_id)}>
                             <td>{film.title}</td>
-                            <td className="text-center">{film.category_name}</td>
+                            <td className="text-center"><span className="badge bg-secondary">{film.category_name}</span></td>
                             <td className="text-center">{film.rental_count}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            {/* Top 5 Actors */}
-            <h2 className="text-center">Top 5 Actors</h2>
-            <table className="table table-striped table-hover" style={{cursor: 'pointer'}}>
+            {/* Divider */}
+            <hr className="my-5" style={{border: '2px solid #333', opacity: '0.5'}} />
+
+            {/* Top 5 Actors table */}
+            <div className="text-center mb-4">
+                <h2 className="d-inline-block fw-bold bg-dark text-white rounded-pill px-5 py-3" style={{
+                    fontSize: '1.5rem',
+                    letterSpacing: '1px',
+                    background: 'linear-gradient(90deg, #ff0000 0%, #000000 100%)'
+                }}>Top 5 Actors</h2>
+            </div>
+            <table className="table table-hover" style={{cursor: 'pointer'}}>
                 <tbody>
                 {topActors.map((actor) => (
                     <tr key={actor.actor_id} className="text-center" onClick={() => setSelectedActor(actor)}>
