@@ -70,7 +70,7 @@ export default function Home() {
             </div>
             <table className="table table-hover" style={{cursor: 'pointer'}}>
                 <thead>
-                    <tr >
+                    <tr>
                         <th>Film Name</th>
                         <th className="text-center">Category Name</th>
                         <th className="text-center">Rental Count</th>
