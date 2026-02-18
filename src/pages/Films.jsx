@@ -89,6 +89,12 @@ export default function Films() {
                 <button type="submit" className="btn btn-danger">Search</button>
             </form>
 
+            {searchTerm !== "" &&
+                <div className="text-center">
+                    <p>Showing top results for "<strong>{searchTerm}</strong>"</p>
+                </div>
+            }
+
             {/* Results Table */}
             {loading ? (
                 <p>Loading films...</p>
