@@ -7,6 +7,8 @@ export default function Films() {
     const [loading, setLoading] = useState(true);
     const [selectedFilmId, setSelectedFilmId] = useState(null);
 
+    //Fetch films from backend, with optional search query
+    //async and await prevent the screen from freezing while waiting for the response
     const fetchFilms = async (query = "") => {
         setLoading(true);
         try {
@@ -38,6 +40,39 @@ export default function Films() {
         fetchFilms(searchTerm);
     };
 
+    const handleRentClick = async (filmId, filmTitle) => {
+        // Asks clerk for customer ID
+        const customerId = prompt(`Enter Customer ID to rent "${filmTitle}":`);
+
+        // In case user pressed cancel or left it blank
+        if (!customerId) return;
+
+        // Sends request to backend
+        try {
+            const response = await fetch('/api/rent-film', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    film_id: filmId,
+                    customer_id: customerId
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+            } else {
+                alert("Error: " + data.error);
+            }
+        } catch (error) {
+            console.error("Rental failed:", error);
+            alert("Failed to connect to server.");
+        }
+    };
+
     return (
         <div className="container mt-4">
             <h1 className="mb-4">Film Library</h1>
@@ -51,26 +86,33 @@ export default function Films() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <button type="submit" className="btn btn-primary">Search</button>
+                <button type="submit" className="btn btn-danger">Search</button>
             </form>
 
             {/* Results Table */}
             {loading ? (
                 <p>Loading films...</p>
             ) : (
-                <table className="table table-hover">
+                <table className="table table-striped table-hover" style={{cursor: 'pointer'}}>
                     <thead>
                     <tr>
                         <th>Title</th>
-                        <th>Category</th>  {/* Added this column */}
+                        <th>Category</th>
                         <th>Release Year</th>
                         <th>Rating</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
+
+                    {/* loop through films and create a table row from every element */}
                     {films.map((film) => (
-                        <tr key={film.film_id}>
+                        <tr
+                            //show film details when clicking anywhere on the row, except the rent button
+                            key={film.film_id}
+                            onClick = {() => setSelectedFilmId(film.film_id)}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <td>{film.title}</td>
                             <td>
                                 <span className="badge bg-secondary">{film.category}</span> {/* Added this badge */}
@@ -78,14 +120,15 @@ export default function Films() {
                             <td>{film.release_year}</td>
                             <td>{film.rating}</td>
                             <td>
+
+                                {/* rent botton */}
                                 <button
-                                    className="btn btn-sm btn-outline-info me-2" // added margin for spacing
-                                    onClick={() => setSelectedFilmId(film.film_id)}
+                                    className="btn btn-sm btn-danger"
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Prevents the row click event that shows film details
+                                        handleRentClick(film.film_id, film.title);
+                                    }}
                                 >
-                                    Details
-                                </button>
-                                {/* will be used for rent button later on */}
-                                <button className="btn btn-sm btn-success">
                                     Rent
                                 </button>
                             </td>
@@ -95,7 +138,7 @@ export default function Films() {
                 </table>
             )}
 
-            {/*Reuse modal*/}
+            {/*Reused film detail modal*/}
             {selectedFilmId && (
                 <FilmDetailsModal
                     filmId={selectedFilmId}
