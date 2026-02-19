@@ -5,6 +5,8 @@ export default function Customer() {
     const [customers, setCustomers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     useEffect(() => {
         const fetchCustomers = async () => {
@@ -21,6 +23,7 @@ export default function Customer() {
                 }
                 const data = await response.json();
                 setCustomers(data);
+                setCurrentPage(1); // Reset to page 1 on new search
             } catch (error) {
                 console.error('Error fetching customers:', error);
             } finally {
@@ -37,6 +40,12 @@ export default function Customer() {
     const handleSearch = (e) => {
         e.preventDefault();
     };
+
+    // pagination calculations
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentCustomers = customers.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(customers.length / itemsPerPage);
 
     return (
         <div className="container mt-4">
@@ -74,7 +83,7 @@ export default function Customer() {
                             </tr>
                         </thead>
                         <tbody>
-                            {customers.map((customer) => (
+                            {currentCustomers.map((customer) => (
                                 <tr key={customer.customer_id} style={{cursor: 'pointer'}}>
                                     <td>{customer.first_name} {customer.last_name}</td>
                                     <td>{customer.email}</td>
@@ -88,6 +97,25 @@ export default function Customer() {
                             ))}
                         </tbody>
                     </table>
+                )}
+
+                {/* Pagination */}
+                {!loading && customers.length > itemsPerPage && (
+                    <div className="d-flex justify-content-center gap-2 mt-3">
+                        <button
+                            className="btn btn-outline-secondary"
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                            disabled={currentPage === 1}>
+                            Previous
+                        </button>
+                        <span className="align-self-center">Page {currentPage} of {totalPages}</span>
+                        <button
+                            className="btn btn-outline-secondary"
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}>
+                            Next
+                        </button>
+                    </div>
                 )}
 
                 {/* No Results */}
