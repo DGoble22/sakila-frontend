@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import CustomerDetailsModal from "../components/CustomerDetailsModal.jsx";
 
 export default function Customer() {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -83,7 +84,15 @@ export default function Customer() {
                                     <td>{customer.email}</td>
                                     <td>{customer.customer_id}</td>
                                     <td>
-                                        <button className="btn btn-sm btn-danger">View Details</button>
+                                        <button
+                                            className="btn btn-sm btn-danger me-2"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedCustomer(customer.customer_id);
+                                            }}
+                                        >
+                                            View Details
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -115,7 +124,12 @@ export default function Customer() {
             </div>
 
             {/* Customer Details Modal*/}
-
+            {selectedCustomer && (
+                <CustomerDetailsModal
+                    customerId={selectedCustomer}
+                    onClose={() => setSelectedCustomer(null)}
+                />
+            )}
         </div>
     );
 }
