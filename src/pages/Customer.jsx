@@ -10,11 +10,7 @@ export default function Customer() {
 
     useEffect(() => {
         const fetchCustomers = async () => {
-            // Prevents displaying all customers when search bar is empty
-            if (!searchTerm.trim()) {
-                setCustomers([]);
-                return;
-            }
+
             setLoading(true);
             try {
                 const response = await fetch(`/api/customers?search=${encodeURIComponent(searchTerm)}`);
@@ -76,9 +72,7 @@ export default function Customer() {
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Address</th>
-                                <th>City</th>
-                                <th>Phone</th>
+                                <th>Customer ID</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -87,9 +81,7 @@ export default function Customer() {
                                 <tr key={customer.customer_id} style={{cursor: 'pointer'}}>
                                     <td>{customer.first_name} {customer.last_name}</td>
                                     <td>{customer.email}</td>
-                                    <td>{customer.address}</td>
-                                    <td>{customer.city}</td>
-                                    <td>{customer.phone}</td>
+                                    <td>{customer.customer_id}</td>
                                     <td>
                                         <button className="btn btn-sm btn-danger">View Details</button>
                                     </td>
