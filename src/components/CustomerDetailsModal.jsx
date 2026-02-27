@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function CustomerDetailsModal({ customerId, onClose }) {
+export default function CustomerDetailsModal({ customerId, onClose, onEdit }) {
     const [details, setDetails] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -47,10 +47,22 @@ export default function CustomerDetailsModal({ customerId, onClose }) {
                                 {/* Profile Section */}
                                 <div className="card mb-4">
                                     <div className="card-body">
-                                        <h3 className="card-title">
-                                            {details.profile.first_name} {details.profile.last_name}
-                                        </h3>
+
+                                        <div className="d-flex justify-content-between align-items-center mb-3">
+                                            <h3 className="card-title mb-0">
+                                                {details.profile.first_name} {details.profile.last_name}
+                                            </h3>
+
+                                            {/* Edit button */}
+                                            <button
+                                                className="btn btn-outline-success"
+                                                onClick={onEdit}
+                                            >
+                                                Edit Customer
+                                            </button>
+                                        </div>
                                         <hr/>
+
                                         <div className="row">
                                             <div className="col-md-6">
                                                 <p><strong>Email:</strong> {details.profile.email}</p>

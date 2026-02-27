@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import CustomerDetailsModal from "../components/CustomerDetailsModal.jsx";
+import EditCustomerModal from "../components/EditCustomerModal";
 
 export default function Customer() {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -7,30 +8,30 @@ export default function Customer() {
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [editingCustomer, setEditingCustomer] = useState(null);
     const itemsPerPage = 10;
 
-    useEffect(() => {
-        const fetchCustomers = async () => {
+    const fetchCustomers = async () => {
 
-            setLoading(true);
-            try {
-                const response = await fetch(`/api/customers?search=${encodeURIComponent(searchTerm)}`);
-                if (!response.ok) {
-                    throw new Error('Bad Network Response');
-                }
-                const data = await response.json();
-                setCustomers(data);
-                setCurrentPage(1); // Reset to page 1 on new search
-            } catch (error) {
-                console.error('Error fetching customers:', error);
-            } finally {
-                setLoading(false);
+        setLoading(true);
+        try {
+            const response = await fetch(`/api/customers?search=${encodeURIComponent(searchTerm)}`);
+            if (!response.ok) {
+                throw new Error('Bad Network Response');
             }
-        };
+            const data = await response.json();
+            setCustomers(data);
+            setCurrentPage(1); // Reset to page 1 on new search
+        } catch (error) {
+            console.error('Error fetching customers:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         // Debounce search to reduce API calls while typing
         const timeoutId = setTimeout(() => {fetchCustomers();}, 300);
-
         return () => clearTimeout(timeoutId);
     }, [searchTerm]);
 
@@ -128,9 +129,23 @@ export default function Customer() {
                 <CustomerDetailsModal
                     customerId={selectedCustomer}
                     onClose={() => setSelectedCustomer(null)}
+
+                    // Modal swaps to edit mode
+                    onEdit={() => {
+                        setEditingCustomer(selectedCustomer); // Set the ID for the Edit Modal
+                        setSelectedCustomer(null);      // Close the Details Modal
+                    }}
+                />
+            )}
+
+            {/* Edit Customer Modal */}
+            {editingCustomer && (
+                <EditCustomerModal
+                    customerId={editingCustomer}
+                    onClose={() => setEditingCustomer(null)}
+                    onRefresh={() => fetchCustomers()}
                 />
             )}
         </div>
     );
 }
-
