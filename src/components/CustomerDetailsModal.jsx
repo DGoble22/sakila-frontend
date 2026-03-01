@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function CustomerDetailsModal({ customerId, onClose, onEdit }) {
+export default function CustomerDetailsModal({ customerId, onClose, onEdit, onRefresh }) {
     const [details, setDetails] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -24,6 +24,30 @@ export default function CustomerDetailsModal({ customerId, onClose, onEdit }) {
     const formatDate = (dateString) => {
         if (!dateString) return "Not Returned";
         return new Date(dateString).toLocaleDateString();
+    };
+
+    const handleDelete = async () => {
+
+        if (!window.confirm("Are you sure you want to delete this customer? This action cannot be undone.")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/customers/${customerId}`, {
+                method: "DELETE"
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+                onRefresh();
+                onClose();
+            } else {
+                alert(result.error);
+            }
+        } catch (err) {
+            alert("Failed to connect to the server.");
+        }
     };
 
     return (
@@ -53,13 +77,21 @@ export default function CustomerDetailsModal({ customerId, onClose, onEdit }) {
                                                 {details.profile.first_name} {details.profile.last_name}
                                             </h3>
 
-                                            {/* Edit button */}
-                                            <button
-                                                className="btn btn-outline-success"
-                                                onClick={onEdit}
-                                            >
-                                                Edit Customer
-                                            </button>
+                                            {/* Edit button & delete button */}
+                                            <div className="d-flex flex-column gap-2 align-items-end">
+                                                <button
+                                                    className="btn btn-sm btn-outline-success w-100"
+                                                    onClick={onEdit}
+                                                >
+                                                    Edit Customer
+                                                </button>
+                                                <button
+                                                    className="btn btn-sm btn-outline-danger w-100"
+                                                    onClick={handleDelete}
+                                                >
+                                                    Delete Customer
+                                                </button>
+                                            </div>
                                         </div>
                                         <hr/>
 

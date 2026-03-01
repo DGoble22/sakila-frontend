@@ -140,7 +140,7 @@ export default function Customer() {
                 <CustomerDetailsModal
                     customerId={selectedCustomer}
                     onClose={() => setSelectedCustomer(null)}
-
+                    onRefresh={() => fetchCustomers()}
                     // Modal swaps to edit mode
                     onEdit={() => {
                         setEditingCustomer(selectedCustomer); // Set the ID for the Edit Modal
