@@ -113,7 +113,7 @@ export default function EditCustomerModal({ customerId, onClose, onRefresh }) {
 
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-                        <button type="submit" form="editForm" className="btn btn-warning" disabled={loading}>Save Changes</button>
+                        <button type="submit" form="editForm" className="btn btn-success" disabled={loading}>Save Changes</button>
                     </div>
 
                 </div>

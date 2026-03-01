@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import CustomerDetailsModal from "../components/CustomerDetailsModal.jsx";
 import EditCustomerModal from "../components/EditCustomerModal";
+import AddCustomerModal from "../components/AddCustomerModal";
 
 export default function Customer() {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -10,6 +11,7 @@ export default function Customer() {
     const [currentPage, setCurrentPage] = useState(1);
     const [editingCustomer, setEditingCustomer] = useState(null);
     const itemsPerPage = 10;
+    const [isAddingCustomer, setIsAddingCustomer] = useState(false);
 
     const fetchCustomers = async () => {
 
@@ -52,17 +54,26 @@ export default function Customer() {
             </div>
 
             <div>
-                {/* Search Bar */}
-                <form onSubmit={handleSearch} className="mb-4 d-flex gap-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search for a customer..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <button type="submit" className="btn btn-danger">Search</button>
-                </form>
+                {/* Search Bar and Add Button */}
+                <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
+                    <form onSubmit={handleSearch} className="d-flex gap-2 flex-grow-1">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search for a customer..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <button type="submit" className="btn btn-danger">Search</button>
+                    </form>
+
+                    <button
+                        className="btn btn-success text-nowrap"
+                        onClick={() => setIsAddingCustomer(true)}
+                    >
+                        + Add Customer
+                    </button>
+                </div>
 
                 {/* Loading */}
                 {loading && <p className="text-center">Loading customers...</p>}
@@ -143,6 +154,14 @@ export default function Customer() {
                 <EditCustomerModal
                     customerId={editingCustomer}
                     onClose={() => setEditingCustomer(null)}
+                    onRefresh={() => fetchCustomers()}
+                />
+            )}
+
+            {/* Add Customer Modal */}
+            {isAddingCustomer && (
+                <AddCustomerModal
+                    onClose={() => setIsAddingCustomer(false)}
                     onRefresh={() => fetchCustomers()}
                 />
             )}
