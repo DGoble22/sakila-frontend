@@ -4,19 +4,20 @@ export default function CustomerDetailsModal({ customerId, onClose, onEdit, onRe
     const [details, setDetails] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const fetchDetails = async () => {
+        try {
+            const response = await fetch(`/api/customer-details/${customerId}`);
+            if (!response.ok) throw new Error('Failed to fetch customer details');
+            const data = await response.json();
+            setDetails(data);
+        } catch (error) {
+            console.error("Error fetching customer details:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchDetails = async () => {
-            try {
-                const response = await fetch(`/api/customer-details/${customerId}`);
-                if (!response.ok) throw new Error('Failed to fetch customer details');
-                const data = await response.json();
-                setDetails(data);
-            } catch (error) {
-                console.error("Error fetching customer details:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchDetails();
     }, [customerId]);
 
@@ -24,6 +25,28 @@ export default function CustomerDetailsModal({ customerId, onClose, onEdit, onRe
     const formatDate = (dateString) => {
         if (!dateString) return "Not Returned";
         return new Date(dateString).toLocaleDateString();
+    };
+
+    const handleReturnFilm = async (rentalId) => {
+        if (!window.confirm("Are you sure you would like to mark the film as returned?")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/rentals/${rentalId}/return`, {
+                method: "PUT"
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+                fetchDetails();
+            } else {
+                alert(result.error);
+            }
+        } catch (err) {
+            alert("Failed to connect to the server.");
+        }
     };
 
     const handleDelete = async () => {
@@ -132,7 +155,12 @@ export default function CustomerDetailsModal({ customerId, onClose, onEdit, onRe
                                                     {rental.return_date ? (
                                                         <span className="text-success">Returned on {formatDate(rental.return_date)}</span>
                                                     ) : (
-                                                        <span className="text-danger fw-bold">Out</span>
+                                                        <button
+                                                        className="btn btn-sm btn-outline-danger"
+                                                        onClick={() => handleReturnFilm(rental.rental_id)}
+                                                        >
+                                                            Return Film
+                                                        </button>
                                                     )}
                                                 </td>
                                             </tr>
