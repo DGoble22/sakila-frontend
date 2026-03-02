@@ -1,4 +1,7 @@
 import React, {useEffect, useState} from "react";
+import CustomerDetailsModal from "../components/CustomerDetailsModal.jsx";
+import EditCustomerModal from "../components/EditCustomerModal";
+import AddCustomerModal from "../components/AddCustomerModal";
 
 export default function Customer() {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -6,34 +9,31 @@ export default function Customer() {
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [editingCustomer, setEditingCustomer] = useState(null);
     const itemsPerPage = 10;
+    const [isAddingCustomer, setIsAddingCustomer] = useState(false);
+
+    const fetchCustomers = async () => {
+
+        setLoading(true);
+        try {
+            const response = await fetch(`/api/customers?search=${encodeURIComponent(searchTerm)}`);
+            if (!response.ok) {
+                throw new Error('Bad Network Response');
+            }
+            const data = await response.json();
+            setCustomers(data);
+            setCurrentPage(1); // Reset to page 1 on new search
+        } catch (error) {
+            console.error('Error fetching customers:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchCustomers = async () => {
-            // Prevents displaying all customers when search bar is empty
-            if (!searchTerm.trim()) {
-                setCustomers([]);
-                return;
-            }
-            setLoading(true);
-            try {
-                const response = await fetch(`/api/customers?search=${encodeURIComponent(searchTerm)}`);
-                if (!response.ok) {
-                    throw new Error('Bad Network Response');
-                }
-                const data = await response.json();
-                setCustomers(data);
-                setCurrentPage(1); // Reset to page 1 on new search
-            } catch (error) {
-                console.error('Error fetching customers:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         // Debounce search to reduce API calls while typing
         const timeoutId = setTimeout(() => {fetchCustomers();}, 300);
-
         return () => clearTimeout(timeoutId);
     }, [searchTerm]);
 
@@ -54,17 +54,26 @@ export default function Customer() {
             </div>
 
             <div>
-                {/* Search Bar */}
-                <form onSubmit={handleSearch} className="mb-4 d-flex gap-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search for a customer..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <button type="submit" className="btn btn-danger">Search</button>
-                </form>
+                {/* Search Bar and Add Button */}
+                <div className="d-flex justify-content-between align-items-center mb-4 gap-3">
+                    <form onSubmit={handleSearch} className="d-flex gap-2 flex-grow-1">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search for a customer..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <button type="submit" className="btn btn-danger">Search</button>
+                    </form>
+
+                    <button
+                        className="btn btn-success text-nowrap"
+                        onClick={() => setIsAddingCustomer(true)}
+                    >
+                        + Add Customer
+                    </button>
+                </div>
 
                 {/* Loading */}
                 {loading && <p className="text-center">Loading customers...</p>}
@@ -76,9 +85,7 @@ export default function Customer() {
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Address</th>
-                                <th>City</th>
-                                <th>Phone</th>
+                                <th>Customer ID</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -87,11 +94,17 @@ export default function Customer() {
                                 <tr key={customer.customer_id} style={{cursor: 'pointer'}}>
                                     <td>{customer.first_name} {customer.last_name}</td>
                                     <td>{customer.email}</td>
-                                    <td>{customer.address}</td>
-                                    <td>{customer.city}</td>
-                                    <td>{customer.phone}</td>
+                                    <td>{customer.customer_id}</td>
                                     <td>
-                                        <button className="btn btn-sm btn-danger">View Details</button>
+                                        <button
+                                            className="btn btn-sm btn-danger me-2"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedCustomer(customer.customer_id);
+                                            }}
+                                        >
+                                            View Details
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -123,8 +136,35 @@ export default function Customer() {
             </div>
 
             {/* Customer Details Modal*/}
+            {selectedCustomer && (
+                <CustomerDetailsModal
+                    customerId={selectedCustomer}
+                    onClose={() => setSelectedCustomer(null)}
+                    onRefresh={() => fetchCustomers()}
+                    // Modal swaps to edit mode
+                    onEdit={() => {
+                        setEditingCustomer(selectedCustomer); // Set the ID for the Edit Modal
+                        setSelectedCustomer(null);      // Close the Details Modal
+                    }}
+                />
+            )}
 
+            {/* Edit Customer Modal */}
+            {editingCustomer && (
+                <EditCustomerModal
+                    customerId={editingCustomer}
+                    onClose={() => setEditingCustomer(null)}
+                    onRefresh={() => fetchCustomers()}
+                />
+            )}
+
+            {/* Add Customer Modal */}
+            {isAddingCustomer && (
+                <AddCustomerModal
+                    onClose={() => setIsAddingCustomer(false)}
+                    onRefresh={() => fetchCustomers()}
+                />
+            )}
         </div>
     );
 }
-
